@@ -1,6 +1,9 @@
 <h1 align="center">🤖 짱구봇(Crayonbot)</h1>
-
-
+<p align="center">
+    <a href="https://koreanbots.dev/bots/915546504054333450" target="_blank"><img src="https://koreanbots.dev/api/widget/bots/status/915546504054333450.svg?scale=1.5"></a>
+    <a href="https://koreanbots.dev/bots/915546504054333450" target="_blank"><img src="https://koreanbots.dev/api/widget/bots/servers/915546504054333450.svg?scale=1.5"></a>
+    <a href="https://koreanbots.dev/bots/915546504054333450/vote" target="_blank"><img src="https://koreanbots.dev/api/widget/bots/votes/915546504054333450.svg?scale=1.5"></a>
+</p>
 <p align="center">
   <b>🔗 Some Links 🔗</b><br>
   <a href="https://discord.gg/Jk6VRvsnqa">Official Support Server</a> 🔗
