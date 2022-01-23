@@ -34,7 +34,7 @@ class MyBot(commands.Bot):
 
 
 INTENTS = discord.Intents.all()
-my_bot = MyBot(command_prefix=["짱구야 ","짱구야","ㄱ","ㄱ "], intents=INTENTS)
+my_bot = MyBot(command_prefix=["짱구야 ","짱구야","ㄱ ","ㄱ","r ","r","ㅉ ","ㅉ"], intents=INTENTS)
 
 
 PycordComponents(my_bot)

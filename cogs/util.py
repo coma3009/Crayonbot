@@ -3,8 +3,13 @@ import asyncio
 from PycordPaginator import Paginator
 import discord
 from discord import colour
+import platform
 from discord.ext import commands
 import datetime
+from discord_components import (
+    Select,
+    SelectOption, Interaction
+)
 import aiosqlite
 
 class util(commands.Cog):
@@ -104,32 +109,170 @@ class util(commands.Cog):
         em.set_image(url=member_obj.avatar_url)
         await ctx.reply(embed=em)
 
-    @commands.command(name="유저정보")
-    async def userinfo(self, ctx, member: discord.Member = None):
-        date = datetime.datetime.utcfromtimestamp(((int(ctx.author.id) >> 22) + 1420070400000) / 1000)
-        embed = discord.Embed(color=0xffff00, title=f'{member.name} 님의 정보') 
-        embed.add_field(name="`이름`", value=member.name, inline=False) 
-        embed.add_field(name="`별명`", value=member.display_name) 
-        embed.add_field(name="`디스코드 가입일`", value=str(date.year) + "년 " + str(date.month) + "월 " + str(date.day) + "일", inline=False) 
-        embed.add_field(name="`서버 가입일`", value=f"{(member.joined_at).year}년 {(member.joined_at).month}월 {(member.joined_at).day}일", inline=False) 
-        embed.add_field(name="`아이디`", value=member.id) 
-        embed.add_field(name="`최상위 역할`", value=member.top_role.mention, inline=False) 
-        embed.set_thumbnail(url=member.avatar_url) 
-        await ctx.send(embed=embed) 
+    # @commands.command(name="유저정보")
+    # async def userinfo(self, ctx, member: discord.Member = None):
+    #     date = datetime.datetime.utcfromtimestamp(((int(ctx.author.id) >> 22) + 1420070400000) / 1000)
+    #     embed = discord.Embed(color=0xffff00, title=f'{member.name} 님의 정보') 
+    #     embed.add_field(name="`이름`", value=member.name, inline=False) 
+    #     embed.add_field(name="`별명`", value=member.display_name) 
+    #     embed.add_field(name="`디스코드 가입일`", value=str(date.year) + "년 " + str(date.month) + "월 " + str(date.day) + "일", inline=False) 
+    #     embed.add_field(name="`서버 가입일`", value=f"{(member.joined_at).year}년 {(member.joined_at).month}월 {(member.joined_at).day}일", inline=False) 
+    #     embed.add_field(name="`아이디`", value=member.id) 
+    #     embed.add_field(name="`최상위 역할`", value=member.top_role.mention, inline=False) 
+    #     embed.set_thumbnail(url=member.avatar_url) 
+    #     await ctx.send(embed=embed) 
 
-    @commands.command(
-    name = "내정보"
-    )
-    async def my_info(self, ctx):
-        date = datetime.datetime.utcfromtimestamp(((int(ctx.author.id) >> 22) + 1420070400000) / 1000)
-        embed = discord.Embed(color=0xffff00, title=f'{ctx.author.name} 님의 정보') 
-        embed.add_field(name="`이름`", value=ctx.author.name, inline=False) 
-        embed.add_field(name="`별명`", value=ctx.author.display_name) 
-        embed.add_field(name="`디스코드 가입일`", value=str(date.year) + "년 " + str(date.month) + "월 " + str(date.day) + "일", inline=False) 
-        embed.add_field(name="`서버 가입일`", value=f"{(ctx.author.joined_at).year}년 {(ctx.author.joined_at).month}월 {(ctx.author.joined_at).day}일", inline=False) 
-        embed.add_field(name="`아이디`", value=ctx.author.id) 
-        embed.add_field(name="`최상위 역할`", value=ctx.author.top_role.mention, inline=False) 
-        embed.set_thumbnail(url=ctx.author.avatar_url) 
-        await ctx.send(embed=embed) 
+    # @commands.command(
+    # name = "내정보"
+    # )
+    # async def my_info(self, ctx):
+    #     date = datetime.datetime.utcfromtimestamp(((int(ctx.author.id) >> 22) + 1420070400000) / 1000)
+    #     embed = discord.Embed(color=0xffff00, title=f'{ctx.author.name} 님의 정보') 
+    #     embed.add_field(name="`이름`", value=ctx.author.name, inline=False) 
+    #     embed.add_field(name="`별명`", value=ctx.author.display_name) 
+    #     embed.add_field(name="`디스코드 가입일`", value=str(date.year) + "년 " + str(date.month) + "월 " + str(date.day) + "일", inline=False) 
+    #     embed.add_field(name="`서버 가입일`", value=f"{(ctx.author.joined_at).year}년 {(ctx.author.joined_at).month}월 {(ctx.author.joined_at).day}일", inline=False) 
+    #     embed.add_field(name="`아이디`", value=ctx.author.id) 
+    #     embed.add_field(name="`최상위 역할`", value=ctx.author.top_role.mention, inline=False) 
+    #     embed.set_thumbnail(url=ctx.author.avatar_url) 
+    #     await ctx.send(embed=embed) 
+    @commands.command(name="봇정보")
+    async def botinfo(self, ctx):
+        """
+        Get some useful (or not) information about the bot.
+        """
+
+        # This is, for now, only temporary
+
+        embed = discord.Embed(
+            description="하린봇 정보",
+            color=0x42F56C
+        )
+        embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.set_image(
+            url="https://media.discordapp.net/attachments/921555509935480853/921555519578189834/c265877614d80026.png?width=400&height=144")
+        embed.add_field(
+            name="주인:",
+            value="DEV.RYZEN#0001(866297659362246706)",
+            inline=True
+        )
+        embed.add_field(
+            name="파이코드 버전:",
+            value=f"{discord.__version__}",
+            inline=True
+        )
+        embed.add_field(
+            name="파이썬 버전:",
+            value=f"{platform.python_version()}",
+            inline=False
+        )
+        embed.add_field(
+            name="OS Platform:",
+            value=f"{platform.platform()}",
+            inline=False
+        )
+        embed.add_field(name="접두사", value='짱구야 ', inline=True)
+        embed.add_field(
+            name="핑:",
+            value=str(round(self.bot.latency * 1000)) + "ms",
+            inline=True
+        )
+        embed.add_field(name="서버수", value=f"{(len(self.bot.guilds))}개의 서버에 있습니다!")
+        await ctx.reply(embed=embed)
+    @commands.group(name="뱃지", aliases=["배지"],invoke_without_command=True)
+    async def badge(self,ctx):
+        premium = "<:premium1:933686642919751710><:premium2:933686672028205076><:premium3:933686698838224936>\n<:badge:933686572379934790>\n짱구봇 프리미엄 사용시 부여되는 배지입니다."
+        embde=discord.Embed(title="뱃지", colour=discord.Colour.random())
+        embde.add_field(name="프리미엄 뱃지", value=f"{premium}")
+        await ctx.reply(embed=embde)
+    @badge.command(name="등록")
+    @commands.is_owner()
+    async def badge_add(self, ctx, user_id:int, badge_type):
+        dicts = {
+            "premium":"<:premium1:933686642919751710><:premium2:933686672028205076><:premium3:933686698838224936>",
+        }
+        user = await self.bot.fetch_user(user_id)
+        db = await aiosqlite.connect("db/db.sqlite")
+        cur = await db.execute("SELECT * FROM badge WHERE user = ? AND badge_type = ?", (user_id,badge_type))
+        res = await cur.fetchone()
+        if res is not None:
+            return await ctx.reply("이미 소유하고 있어요.")
+        user_em = discord.Embed(
+            title="축하드립니다!🎉",
+            description=f"관리자님이 {dicts[badge_type]}배지를 부여하셨어요!",
+            colour=discord.Colour.random()
+        )
+        await db.execute("INSERT INTO badge(user,badge_type) VALUES (?,?)",(user_id,badge_type))
+        await db.commit()
+        await user.send(embed=user_em)
+        await ctx.message.add_reaction("✅")
+
+    @badge.command(name="제거")
+    @commands.is_owner()
+    async def badge_remove(self,ctx,user_id:int):
+        dicts = {
+            "premium_badge": self.bot.get_emoji(933686572379934790)
+        }
+        db = await aiosqlite.connect("db/db.sqlite")
+        cur = await db.execute("SELECT * FROM badge WHERE user = ?", (user_id,))
+        res = await cur.fetchall()
+        msg = await ctx.send("제거할 배지를 선택하세요.",
+                             components=[
+                                 Select(placeholder="제거할 배지 선택",
+                                        options=[
+                                            SelectOption(label=i[1],
+                                                         value=i[1], emoji=dicts[i[1]]) for i in res
+                                        ], )
+
+                             ],
+                             )
+        try:
+            interaction = await self.bot.wait_for(
+                "select_option", check=lambda inter: inter.user.id == ctx.author.id
+            )
+            value = interaction.values[0]
+        except asyncio.TimeoutError:
+            await msg.edit("시간이 초과되었어요!", components=[])
+            return
+        await db.execute("DELETE FROM badge WHERE user = ? AND badge_type = ?",(user_id, value))
+        await db.commit()
+        await msg.edit(content="✅", components = [])
+
+    @commands.command(name="유저정보",aliases=['내정보'])
+    async def myinfo(self, ctx, member:discord.Member = None):
+        dicts = {
+            "premium": "<:badge:933686572379934790>"
+        }
+        member = ctx.author if not member else member
+        db = await aiosqlite.connect("db/db.sqlite")
+        cur = await db.execute("SELECT * FROM badge WHERE user = ?",(member.id,))
+        res = await cur.fetchall()
+        if res != []:
+            li = [dicts[i[1]] for i in res]
+            vl = " ".join(li)
+        else:
+            vl = "<:botoff:933726671431950378>소유한 배지 없음"
+        em = discord.Embed(
+            title=f"{member}의 정보",
+            colour=discord.Colour.random()
+        )
+        em.add_field(
+            name="디스코드 가입일",
+            value=f"{member.created_at.strftime('%Y-%m-%d  %H:%M:%S')}\n최초 가입일로부터 `{(ctx.message.created_at - member.created_at).days}`일 지남."
+        )
+        em.add_field(
+            name="서버 가입일",
+            value=member.joined_at.strftime('%Y-%m-%d  %H:%M:%S') + "\n최초 서버 가입일로 부터 `" + str((ctx.message.created_at - member.joined_at).days) + "`일 지남."
+        )
+        em.add_field(
+            name="소유 역할",
+            value=", ".join([role.mention for role in list(reversed(member.roles)) if not role.is_default()]),
+            inline=False
+        )
+        em.add_field(
+            name="소유 배지",
+            value= vl
+        )
+        await ctx.reply(embed=em)
 def setup(bot):
     bot.add_cog(util(bot))

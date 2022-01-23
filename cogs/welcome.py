@@ -26,7 +26,28 @@ class Welcome(commands.Cog):
             )
             channel = self.bot.get_channel(data[1])
             await channel.send(f"{member.mention}님이 오셨습니다! 반가워해주세요.",file=img)
-
+    @commands.Cog.listener("on_member_remove")
+    async def member_remove(self, member):
+        database = await aiosqlite.connect("db/db.sqlite")
+        cur = await database.execute("SELECT * FROM removes WHERE guild = ?", (member.guild.id,))
+        data = await cur.fetchone()
+        premium_cur = await database.execute("SELECT * FROM premium WHERE guild = ?", (member.guild.id,))
+        premium_resp = await premium_cur.fetchone()
+        if premium_resp == None:
+            print("프리미엄 해제")    
+        if data is not None:
+                img = await self.ImageManager.create_welcome_card(
+                    member,
+                    "https://media.discordapp.net/attachments/921555509935480853/922013277112922152/i16280711964.png?width=400&height=225",
+                    # discordSuperUtils.Backgrounds.DISCORD,#discordSuperUtils.ImageManager.load_asset("bgimg.png")
+                    f"안녕히가세요, {member}님.",
+                    "나가습니다..ㅠ",
+                    title_color=(127, 255, 0),
+                    description_color=(127, 255, 0),
+                    font_path="user.ttf"
+                )
+                channel = self.bot.get_channel(data[1])
+                await channel.send(f"{member.name}({member})님이 나가셨습니다.",file=img)
 
 def setup(bot):
     bot.add_cog(Welcome(bot))

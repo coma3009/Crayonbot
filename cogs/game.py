@@ -1,3 +1,4 @@
+from dis import disco
 from os import name
 import discord
 from discord import message
@@ -5,6 +6,7 @@ from discord import embeds
 from discord.ext import commands
 import aiosqlite
 import os
+import emoji
 import psutil
 import random
 import asyncio
@@ -12,7 +14,7 @@ import traceback
 import datetime
 import time
 
-
+from discord_components import Button, ButtonStyle, SelectOption, Select, component
 from discord.ext.commands.core import Command, command
 
 
@@ -58,37 +60,46 @@ class game(commands.Cog, name = "게임 명령어", description = "게임 명령
     )
     async def rsp_cmd(self, ctx):
         try:
-            m = await ctx.send(f"<@{ctx.author.id}> 안 내면 진다 가위 바위 보")
-            await m.add_reaction('✌')
-            await m.add_reaction('✊')
-            await m.add_reaction('🖐')
+            m = await ctx.send(f"<@{ctx.author.id}> 안 내면 진다 가위 바위 보", components = [
+                [
+                    Button(label = "가위", emoji="✌", style=ButtonStyle.green, id="gawi"),
+                    Button(label = "바위", emoji="✊", style=ButtonStyle.green, id="qkdnl"),
+                    Button(label = "보", emoji="🖐", style=ButtonStyle.green, id="qh"),
+                    Button(label = "취소", emoji = "❌", style = ButtonStyle.red, id = "cancel"),
+                ]
+            ])
+            def check(res):
+                return res.user == ctx.author and res.channel == ctx.channel
+            
             try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout = 20, check = lambda reaction, user: user == ctx.author and str(reaction.emoji) in ['✌', '✊', '🖐'])
+                res = await self.bot.wait_for("button_click", check = check, timeout = 25)
+                if res.component.id == "cancel":
+                    return await m.edit(embed = discord.Embed(title = "가위바위보 취소", description = "나랑 가위바위보 안해줄꺼야?.......", colour=discord.Colour.red()), components = [])
             except asyncio.TimeoutError:
-                await ctx.send(f'<@{ctx.author.id}>\n어? 안냈내? 그럼 내가 이겨따!!^^')
+                await m.edit(f'<@{ctx.author.id}>\n 어? 안냈내? 내가 이겨따!!^^', components = [])
             else:
-                if str(reaction.emoji) == "✌":
+                if res.component.id == "gawi":
                     a = ['가위','보','바위']
                     c = random.choice(a)
                     if c == '가위':
-                        embed = discord.Embed(title=f"쳇. 비겼네......;;",color=discord.Colour.yellow(), timestamp=ctx.message.created_at)
+                        embed = discord.Embed(title=f"쳇. 비겼네......;;",color=discord.Colour.green(), timestamp=ctx.message.created_at)
                         embed.add_field(name=f"{ctx.author}", value=f"가위✌", inline=True)
                         embed.add_field(name=f"{self.bot.user.name}", value=f"가위✌", inline=True)
                         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                        await ctx.send(embed=embed)
+                        await m.edit(embed=embed, components=[])
                     if c == '보':
-                        embed = discord.Embed(title=f"ㄲㅂ. 내가 이겨야 하는데... 그래 내가 한판 봐줬다. 니가 이겼어",color=discord.Colour.red(), timestamp=ctx.created_at)
+                        embed = discord.Embed(title=f"ㄲㅂ. 내가 이겨야 하는데... 그래 내가 한판 봐줬다. 니가 이겼어",color=discord.Colour.red(), timestamp=ctx.message.created_at)
                         embed.add_field(name=f"{ctx.author}", value=f"가위✌", inline=True)
                         embed.add_field(name=f"{self.bot.user.name}", value=f"보🤚", inline=True)
                         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                        await ctx.send(embed=embed)
+                        await m.edit(embed=embed, components=[])
                     if c == '바위':
                         embed = discord.Embed(title=f"거봐 내가 이긴다고 했지? 에휴. 허접이네",color=discord.Colour.blue(), timestamp=ctx.message.created_at)
                         embed.add_field(name=f"{ctx.author}", value=f"가위✌", inline=True)
                         embed.add_field(name=f"{self.bot.user.name}", value=f"바위✊", inline=True)
                         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                        await ctx.send(embed=embed)
-                elif str(reaction.emoji) == "✊":
+                        await m.edit(embed=embed, components=[])
+                elif res.component.id == "qkdnl":
                     a = ['가위','보','바위']
                     c = random.choice(a)
                     if c == '가위':
@@ -96,20 +107,20 @@ class game(commands.Cog, name = "게임 명령어", description = "게임 명령
                         embed.add_field(name=f"{ctx.author}", value=f"바위✊", inline=True)
                         embed.add_field(name=f"{self.bot.user.name}", value=f"가위✌", inline=True)
                         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                        await ctx.send(embed=embed)
+                        await m.edit(embed=embed, components=[])
                     if c == '보':
                         embed = discord.Embed(title=f"거봐 내가 이긴다고 했지? 에휴. 허접이네",color=discord.Colour.blue(), timestamp=ctx.message.created_at)
                         embed.add_field(name=f"{ctx.author}", value=f"바위✊", inline=True)
                         embed.add_field(name=f"{self.bot.user.name}", value=f"보🤚", inline=True)
                         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                        await ctx.send(embed=embed)
+                        await m.edit(embed=embed, components=[])
                     if c == '바위':
-                        embed = discord.Embed(title=f"쳇. 비겼네......;;",color=discord.Colour.yellow(), timestamp=ctx.message.created_at)
+                        embed = discord.Embed(title=f"쳇. 비겼네......;;",color=discord.Colour.green(), timestamp=ctx.message.created_at)
                         embed.add_field(name=f"{ctx.author}", value=f"바위✊", inline=True)
                         embed.add_field(name=f"{self.bot.user.name}", value=f"바위✊", inline=True)
                         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                        await ctx.send(embed=embed)
-                elif str(reaction.emoji) == "🖐":
+                        await m.edit(embed=embed, components=[])
+                elif res.component.id == "qh":
                     a = ['가위','보','바위']
                     c = random.choice(a)
                     if c == '가위':
@@ -117,19 +128,19 @@ class game(commands.Cog, name = "게임 명령어", description = "게임 명령
                         embed.add_field(name=f"{ctx.author}", value=f"보🤚", inline=True)
                         embed.add_field(name=f"{self.bot.user.name}", value=f"가위✌", inline=True)
                         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                        await ctx.send(embed=embed)
+                        await m.edit(embed=embed, components=[])
                     if c == '보':
-                        embed = discord.Embed(title=f"쳇. 비겼네......;;",color=discord.Colour.yellow(), timestamp=ctx.message.created_at)
+                        embed = discord.Embed(title=f"쳇. 비겼네......;;",color=discord.Colour.green(), timestamp=ctx.message.created_at)
                         embed.add_field(name=f"{ctx.author}", value=f"보🤚", inline=True)
                         embed.add_field(name=f"{self.bot.user.name}", value=f"보🤚", inline=True)
                         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                        await ctx.send(embed=embed)
+                        await m.edit(embed=embed, components=[])
                     if c == '바위':
                         embed = discord.Embed(title=f"ㄲㅂ. 내가 이겨야 하는데... 그래 내가 한판 봐줬다. 니가 이겼어",color=discord.Colour.red(), timestamp=ctx.message.created_at)
                         embed.add_field(name=f"{ctx.author}", value=f"보🤚", inline=True)
                         embed.add_field(name=f"{self.bot.user.name}", value=f"바위✊", inline=True)
                         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                        await ctx.send(embed=embed)
+                        await m.edit(embed=embed, components=[])
         except:
             print(traceback.format_exc())
                     

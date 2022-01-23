@@ -4,7 +4,7 @@ import discordSuperUtils
 from discord.ext import commands
 
 
-class InviteTracker(commands.Cog):
+class InviteTracke(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.ImageManager = discordSuperUtils.ImageManager()
@@ -76,4 +76,4 @@ class InviteTracker(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(InviteTracker(bot))
+    bot.add_cog(InviteTracke(bot))

@@ -19,12 +19,14 @@ class General(commands.Cog):
             "wlc": "환영인사",
             "ivt": "초대추적",
             "-HOnNt": "공지수신",
+            "removes": "퇴장인사",
             "-HOnBtd": "생일알림"
             # "-HNoAts":"안티스팸 무시"
         }
         self.option_dict_db = {
             "wlc": "welcome",
-            "ivt": "invite_tracker"
+            "ivt": "invite_tracker",
+            "removes": "removes"
         }
         self.ModmailManager = ModMailManager(bot, trigger="-modmail")
     async def cog_before_invoke(self, ctx: commands.Context):
@@ -93,6 +95,10 @@ class General(commands.Cog):
         data = await cur.fetchone()
         if data is not None:
             on_option.append(self.option_dict["wlc"] + " 🟢")
+        cur = await database.execute("SELECT * FROM removes WHERE guild = ?", (ctx.guild.id,))
+        data = await cur.fetchone()
+        if data is not None:
+            on_option.append(self.option_dict["removes"] + " 🟢")
         cur = await database.execute("SELECT * FROM invite_tracker WHERE guild = ?", (ctx.guild.id,))
         data = await cur.fetchone()
         if data is not None:
@@ -109,8 +115,6 @@ class General(commands.Cog):
     async def option(self, ctx):
         database = self.bot.db
         check_option = await self.check_option(ctx=ctx)
-        embed=discord.Embed(title="옵션", colour=discord.Colour.random())
-        await ctx.reply(embed=embed)
         """
         SelectOption(label="안티스팸 무시",
                                                             description="이 채널에 메세지 도배나 멘션 도배를 무시하는 모드입니다.",
@@ -120,11 +124,19 @@ class General(commands.Cog):
                               components=[
                                   Select(placeholder="옵션",
                                          options=[
+                                             SelectOption(label="레벨링",
+                                                          description="이 채널을 레벨링전용 채널로 설정해요.",
+                                                          value="-HOnLv", emoji="🏆"),
                                              SelectOption(label="환영인사", description="유저가 서버에 입장시 자동으로 인사하는 모드입니다.",
                                                           value="wlc", emoji="👋"),
+                                             SelectOption(label="퇴장인사", description="유저가 서버에 퇴장시 자동으로 인사하는 모드입니다.",
+                                                          value="removes", emoji="👋"),
                                              SelectOption(label="초대추적",
                                                           description="유저가 서버에 입장시 누구의 초대로 서버에 들어왔는지 확인할 수 있는 모드입니다.",
                                                           value="ivt", emoji="📈"),
+                                             SelectOption(label="욕설감지",
+                                                          description="이 채널을 욕설감지채널로 설정해요.",
+                                                          value="-HOnBdWld", emoji="🤬"),
                                              SelectOption(label="봇공지채널",
                                                           description="이 채널을 봇 공지를 받을수있는 채널로 설정해요.",
                                                           value="-HOnNt", emoji="📢"),
@@ -259,8 +271,41 @@ class General(commands.Cog):
         if value == "serverstat":
             database = await aiosqlite.connect("db/db.sqlite")
             await self.setup_serverstat(ctx=ctx,guild=ctx.guild,msg=msg,db=database)
-
-
+        if value == "removes":
+            database = await aiosqlite.connect("db/db.sqlite")
+            cur = await database.execute("SELECT * FROM removes WHERE guild = ?", (ctx.guild.id,))
+            data = await cur.fetchone()
+            premium_cur = await database.execute("SELECT * FROM premium WHERE guild = ?", (ctx.guild.id,))
+            premium_resp = await premium_cur.fetchone()
+            print(data)
+            if premium_resp == None:
+                return await msg.edit("프리미엄을 사용중이지않아 퇴장인사를 사용못하세요.... \n구매를 원할시 `짱구야 프리미엄`을 해주세요!", components=[])
+            if data is not None:
+                await msg.edit(f"이미 설정되어있어요!\n설정되어있는 채널 - <#{data[1]}>", components=[])
+                return
+            else:
+                    await msg.delete()
+                    msg = await ctx.reply(
+                        f"{self.option_dict[value]}를 선택하셨어요!\n추가 설정을 위해 아래의 질문에 맞는 값을 보내주세요!\n메세지가 보내질 __채널 ID__를 보내주세요.(ex| 123456789)",
+                        components=[])
+                    try:
+                        message = await self.bot.wait_for("message",
+                                                        check=lambda i: i.author.id == ctx.author.id and i.channel.id == ctx.channel.id,
+                                                        timeout=60)
+                        message = message.content
+                    except asyncio.TimeoutError:
+                        await msg.edit("시간이 초과되었어요!", components=[])
+                        return
+                    await msg.edit("저장중이에요!", components=[])
+                    try:
+                        await database.execute(f"INSERT INTO {self.option_dict_db[value]}(guild,channel) VALUES (?, ?)",
+                                            (ctx.guild.id, int(message)))
+                        await database.commit()
+                    except Exception as e:
+                        await msg.edit("에러가 발생했어요! \n에러내역을 개발자에게 발송하였으니 곧 고쳐질거에요!")
+                        print(e)
+                        return
+                    await msg.edit("저장을 완료했어요!\n채널 - <#{ch}>".format(ch=message), components=[])
 
     @staticmethod
     async def msg_edit_channel(ctx, msg, count, value):

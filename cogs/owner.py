@@ -1,9 +1,12 @@
 import discord
 from discord.embeds import Embed
 from discord.ext import commands, tasks
-import asyncio
 import random
-import os
+import time
+import uuid
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+import traceback
 from discord.ext.menus import Button
 from discord_components import component
 from discord_components import Button, ButtonStyle, SelectOption, Select
@@ -34,7 +37,7 @@ class Owner(commands.Cog):
         name="Check-Error",
         aliases=["elog"],
         usage="elog [code]",
-        help=" 코인의 에러 로그를 확인할수 있습니다.",
+        help=" 짱구의 에러 로그를 확인할수 있습니다.",
         hidden=True,
     )
     @commands.is_owner()
@@ -48,7 +51,26 @@ class Owner(commands.Cog):
             await ctx.send(
                 content=code, file=discord.File(fp=data, filename=f"{code}.txt")
             )
+    @commands.command(name="메일작성")
+    @commands.is_owner()
+    async def mail(self, ctx, *, va_lue):
+        database = await aiosqlite.connect("db/db.sqlite")
+        cur = await database.execute('SELECT * FROM mail')
+        mails = await cur.fetchall()
+        print(mails)
+        check = 1
+        # noinspection PyBroadException
+        try:
+            for _ in mails:
+                check += 1
+        except Exception as e:
+            print(e)
+        await database.execute(
+            'INSERT INTO mail(id,value) VALUES (?,?)', (check, va_lue)
+        )
 
+        await database.commit()
+        await ctx.send('성공적으로 메일을 발송하였습니다.')
     @commands.command(name="공지")
     @commands.is_owner()
     async def broadcasting(self, ctx, *, value):
@@ -186,7 +208,35 @@ class Owner(commands.Cog):
         if datas != None:
             await ctx.reply("초기화 완료")
 
-    
+    @commands.command(name="디엠")
+    @commands.is_owner()
+    async def dm(self, ctx, user_id:int, *, reason):
+        try:
+            user1 = await self.bot.fetch_user(user_id)
+            embed=discord.Embed(title="알림", description="봇관리자로 부터 메시지가 왔습니다. \n궁금한 사항이나 오류발견시 봇 디엠으로 문의넣어주세요.", colour=discord.Colour.random())
+            embed.add_field(name="메시지내용", value=f"{reason}")
+            await user1.send(embed=embed)
+            await ctx.send("전송완료!")
+        except:
+            print(traceback.format_exc())
+            await ctx.send((traceback.format_exc()))
+    @commands.command(name="서버탈퇴" ,aliases=['나와', '나가' '탈퇴'])
+    @commands.is_owner()
+    async def get_out(self, ctx, guild_id: int):
+        if isinstance(ctx.channel, discord.abc.PrivateChannel) == True:
+                msg2 = await ctx.send('서버 찾는중 ( ' + '0' + ' )')
+                count = 0
+                for guild in self.bot.guilds:
+                    if guild.id == guild_id:
+                        await guild.leave()
+                        await ctx.send('`' + str(guild.name) + '` 에서 나왔어요!')
+                        print(str(guild.name))
+                    else:
+                        pass
+                    
+                    count = count+1
+                    show_count = str(count)
+                    await msg2.edit(content = '서버 찾는중 ( ' + show_count + ' )')
         # for i in self.bot.guilds:
         #     for j in i.text_channels:
         #         if ("코인" in j.topic):
@@ -214,6 +264,89 @@ class Owner(commands.Cog):
         #             else:
         #                 break
         # await ctx.send(f"{count}개의 길드에 공지를 전송했습니다!")
+    @commands.group(name="프리미엄", invoke_without_command=True)
+    async def premium(self,ctx):
+        db = await aiosqlite.connect("db/db.sqlite")
+        conn = await db.execute("SELECT * FROM premium WHERE guild = ?",(ctx.guild.id,))
+        resp = await conn.fetchone()
+        em = discord.Embed(
+            title=f"{ctx.guild.name}의 프리미엄 상태",
+            colour=discord.Colour.random()
+        )
+        em.add_field(name="뮤직 셋업 기능",value="히드라처럼 특정채널에서 노래를 재생해보세요!",inline=False)
+        em.add_field(name="욕설 감지 무제한",value="욕설 감지제한이 1,000회였다면 이젠 무제한으로 욕설을 감지해보세요!",inline=False)
+        em.add_field(name="트위치 채널 등록가능 개수 1 -> 5개", value="트위치 방송알림을 받기위해 등록하는 채널 개수 제한이 1개에서 5개로 늘어납니다!\n다양한 스트리머를 등록해 방송알림을 받아보세요!", inline=False)
+        em.add_field(name="유튜브 채널 등록가능 개수 1 -> 5개", value="유튜브 방송알림을 받기위해 등록하는 채널 개수 제한이 1개에서 5개로 늘어납니다!\n다양한 스트리머를 등록해 방송알림을 받아보세요!", inline=False)
+        if resp == None:
+            em.add_field(name="프리미엄 상태",value="<a:cross:893675768880726017>프리미엄을 이용중인 서버가 아니거나 만료된 상태에요..😥\n자세한 사항&구매는 제 DM으로 `짱구봇에게 DM으로 문의넣어주세요`")
+            em.add_field(name="가격", value="문화상품권:5,000원 \n계좌이체:4,000원")
+        else:
+            #endtime = str(time.mktime(datetime.strptime(resp[2], '%Y-%m-%d %H:%M:%S').timetuple()))[:-2]
+            em.add_field(name="프리미엄 상태", value=f"<:badge:904937799701110814>만료일: <t:{resp[3]}>(<t:{resp[3]}:R>)")
+        await ctx.reply(embed=em)
 
+    @premium.command(name="등록")
+    @commands.is_owner()
+    async def add_premium(self,ctx,guild_id:int,year: int, month: int, day: int):
+        code = uuid.uuid4()
+        db = await aiosqlite.connect("db/db.sqlite")
+        conn = await db.execute("SELECT * FROM premium WHERE guild = ?", (guild_id,))
+        resp = await conn.fetchone()
+        if resp == None:
+            ending = datetime.datetime.now() + relativedelta(years=int(year), months=int(month), days=int(day))
+            ending = ending.strftime('%Y/%m/%d %H:%M:%S')
+            endtime = str(time.mktime(datetime.datetime.strptime(ending, '%Y/%m/%d %H:%M:%S').timetuple()))[:-2]
+            await db.execute("INSERT INTO premium(guild, code, end_time, end_timestamp) VALUES (?, ?, ?, ?)",
+                             (guild_id, str(code), str(ending), endtime))
+            await db.commit()
+            return await ctx.reply("✅")
+        return await ctx.reply("이미 사용중이에요.")
+
+    @premium.command(name="삭제")
+    @commands.is_owner()
+    async def del_premium(self, ctx, code: str, guild_id:int):
+        db = await aiosqlite.connect("db/db.sqlite")
+        conn = await db.execute("SELECT * FROM premium WHERE code = ?", (code,))
+        resp = await conn.fetchone()
+        if resp == None:
+            return await ctx.reply("사용중인 길드가 아니에요.")
+        await db.execute("DELETE FROM premium WHERE code = ?",(code,))
+        await db.execute("DELETE FROM removes WHERE guild = ?", (guild_id,))
+        await db.commit()
+        return await ctx.reply("✅")
+
+    @premium.command(name="조회")
+    @commands.is_owner()
+    async def getinfo_premium(self, ctx, code: str = None):
+        db = await aiosqlite.connect("db/db.sqlite")
+        if code == None:
+            conn = await db.execute("SELECT * FROM premium")
+            resp = await conn.fetchall()
+            formatted_leaderboard = [
+                f"길드(ID): {self.bot.get_guild(x[0])}({x[0]})\n코드: {x[1]}\n만료일: <t:{x[3]}>(<t:{x[3]}:R>)" for x in resp
+            ]
+
+            e = Paginator(
+                client=self.bot.components_manager,
+                embeds=discordSuperUtils.generate_embeds(
+                    formatted_leaderboard,
+                    title="프리미엄 리스트",
+                    fields=15,
+                    description=f"오너전용 프리미엄 정보 리스트",
+                ),
+                channel=ctx.channel,
+                only=ctx.author,
+                ctx=ctx,
+                use_select=False)
+            await e.start()
+        else:
+            conn = await db.execute("SELECT * FROM premium WHERE code = ?",(code,))
+            resp = await conn.fetchone()
+            em = discord.Embed(
+                title=f"{self.bot.get_guild(resp[0])}({resp[0]})의 프리미엄 상태",
+                description=f"코드: {resp[1]}\n프리미엄 만료일: <t:{resp[3]}>(<t:{resp[3]}:R>)",
+                colour=discord.Colour.random()
+            )
+            return await ctx.reply(embed=em)
 def setup(bot):
     bot.add_cog(Owner(bot))

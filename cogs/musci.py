@@ -497,6 +497,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         else:
             track = Track(tracks[0].id, tracks[0].info, requester=ctx.author)
             await ctx.send(f'```ini\n🎶 {track.title} 재생🎶\n```', delete_after=15)
+            channel = self.bot.get_channel(922020865959415838)
+            embed1=discord.Embed(title="노래로그", colour=discord.Colour.random())
+            embed1.add_field(name=f"사용자", value=f"{ctx.author} , {ctx.author.name}")
+            embed1.timestamp = datetime.datetime.utcnow()
+            await channel.send(embed=embed1)
             await player.queue.put(track)
 
         if not player.is_playing:

@@ -7,7 +7,7 @@ from discordSuperUtils import ModMailManager
 class modmail(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.ModmailManager = ModMailManager(self.bot, trigger="ㅎ문의")
+        self.ModmailManager = ModMailManager(self.bot, trigger="짱구야문의")
 
     async def cog_before_invoke(self, ctx: commands.Context):
         print(ctx.command)

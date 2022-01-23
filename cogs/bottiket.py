@@ -5,8 +5,10 @@ from discord.ext import commands
 import os
 from discord.ext.commands.core import command
 import pytz
+import asyncio
+import discord_components
 import datetime
-
+from discord_components import Button, ButtonStyle, SelectOption, Select, component
 ticket_guild_id = 915551354800451616
 category_id = 915561810411814973
 close_ticket_category_id = 915561835267231774
@@ -84,34 +86,104 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
             else:
                 if message.author.bot:
                     return
-                open_ticket_category = ticket_guild.get_channel(category_id) # 이건 왜 길드 아이디지
-                new_ticket = await message.author.send(
-                            embed = discord.Embed(
-                            title=f'문의',
-                            description =f"문의를 해주셔서 감사힙니다. \n 답변이 늦을수도 있으니 \n 기다려주세요.\n \n \n **:warning:  주의사항** \n \n `` 불필요한 문의는 제재 됩니다.`` \n \n ``관리자를 욕할시 처벌대상이 됩니다.`` \n \n ``관리자를 존중해주세요.``" ,
-                            colour = discord.Colour.blue(),
-                        ).set_thumbnail(url="https://cdn.discordapp.com/avatars/872714206246469662/810ef9d933f9985d82f441de0a03fb6b.webp?size=80")
+                open_ticket_category = ticket_guild.get_channel(category_id)
+                embed1 = discord.Embed(title=f'문의',description =f"문의를 해주셔서 감사힙니다. \n 답변이 늦을수도 있으니 \n 기다려주세요. \n \n **문의한 모든 내용은 영구저장됩니다**" ,
+                colour = discord.Colour.blue()
                 )
-
-                ticket_channel = await open_ticket_category.create_text_channel(
-                    message.author.dm_channel.id,
-                    topic=f"{message.author.id}",
-                    position = 1
+                embed1.set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
+                embed1.add_field(name="**:warning:  주의사항**", value="`` 불필요한 문의는 제재 됩니다.`` \n \n ``관리자를 욕할시 처벌대상이 됩니다.`` \n \n ``관리자를 존중해주세요.``")
+                embed = discord.Embed(title=f'문의',description =f"문의를 해주셔서 감사힙니다. \n 답변이 늦을수도 있으니 \n 기다려주세요. \n \n **문의한 모든 내용은 영구저장됩니다**" ,
+                colour = discord.Colour.blue()
                 )
-                staff = ticket_guild.get_role(857395557793792020) # 이건 안넣냐
-                await ticket_channel.set_permissions(
-                    staff,
-                    read_messages=True,
-                    send_messages=True,
-                    read_message_history=True,
-                )
-                await ticket_channel.send(
-                    embed=discord.Embed(description=message.content).set_author(
-                        icon_url=ctx.author.avatar_url,
-                        name=f"{ctx.author} ({ctx.author.id})",
+                embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
+                embed.add_field(name="**:warning:  주의사항**", value="`` 불필요한 문의는 제재 됩니다.`` \n \n ``관리자를 욕할시 처벌대상이 됩니다.`` \n \n ``관리자를 존중해주세요.``")
+                embed.add_field(name="**카테고리**", value="아래 카테고리를 선택해서 버튼을 클릭해주세요.")
+                embed.add_field(name="🌀일반문의", value="일반문의는 어떤 제보나 신고를 하실때 \n 일반문의로 넣어주시면 됩니다")
+                embed.add_field(name="⛔오류제보", value="오류제보는 오류가 발생하거나 명령어 작동이 안될때 \n 오류제보로 넣어주시면 됩니다")
+                embed.add_field(name="❔궁금증", value="궁금증은 명령어를 어떻게 사용하는지 등 궁금할때  \n 궁금증으로 넣어주시면 됩니다")
+                new_ticket = await message.author.send(embed=embed, components = [
+                    [
+                        Button(label = "일반문의", emoji="🌀", style=ButtonStyle.green, id="il"),
+                        Button(label = "오류제보", emoji="⛔", style=ButtonStyle.red, id="war1"),
+                        Button(label = "궁금증", emoji="❔", style=ButtonStyle.blue, id="qu"),
+                        Button(label = "문의취소", emoji = "❌", style = ButtonStyle.red, id = "cancel"),
+                    ]
+                ])
+                def check(res):
+                    return res.user == ctx.author and res.channel == ctx.channel
+                    
+                try:
+                    res = await self.bot.wait_for("button_click", check = check, timeout = 25)
+                    if res.component.id == "cancel":
+                        return await new_ticket.edit(embed = discord.Embed(title = "문의 취소", description = "문의 취소완료", colour=discord.Colour.red()), components = [])
+                except asyncio.TimeoutError:
+                    await new_ticket.edit('시간이 지나 문의가 취소됬습니다.', components = [])
+                if res.component.id == "il":
+                    ticket_channel = await open_ticket_category.create_text_channel(
+                        f'일반-{message.author.dm_channel.id}({message.author.name})',
+                        topic=f"{message.author.id}",
+                        position = 1
                     )
-                )
-                await message.add_reaction("✅")
+                    await ticket_channel.send('<@866297659362246706>')
+                    staff = ticket_guild.get_role(922067926247415848) # 이건 안넣냐
+                    await ticket_channel.set_permissions(
+                        staff,
+                        read_messages=True,
+                        send_messages=True,
+                        read_message_history=True,
+                    )
+                    await ticket_channel.send(
+                        embed=discord.Embed(description=message.content).set_author(
+                            icon_url=ctx.author.avatar_url,
+                            name=f"{ctx.author} ({ctx.author.id})",
+                        )
+                    )
+                    await message.add_reaction("✅")
+                    await new_ticket.edit(embed=embed1, components=[])
+                if res.component.id == "war1":
+                    ticket_channel = await open_ticket_category.create_text_channel(
+                        f'오류-{message.author.dm_channel.id}({message.author.name})',
+                        topic=f"{message.author.id}",
+                        position = 1
+                    )# 이건 안넣냐
+                    await ticket_channel.send('<@866297659362246706>')
+                    staff = ticket_guild.get_role(922067926247415848) # 이건 안넣냐
+                    await ticket_channel.set_permissions(
+                        staff,
+                        read_messages=True,
+                        send_messages=True,
+                        read_message_history=True,
+                    )
+                    await ticket_channel.send(
+                        embed=discord.Embed(description=message.content).set_author(
+                            icon_url=ctx.author.avatar_url,
+                            name=f"{ctx.author} ({ctx.author.id})",
+                        )
+                    )
+                    await message.add_reaction("✅")
+                    await new_ticket.edit(embed=embed1, components=[])
+                if res.component.id == "qu":
+                    ticket_channel = await open_ticket_category.create_text_channel(
+                        f'궁금증-{message.author.dm_channel.id}({message.author.name})',
+                        topic=f"{message.author.id}",
+                        position = 1
+                    )# 이건 안넣냐
+                    await ticket_channel.send('<@866297659362246706>')
+                    staff = ticket_guild.get_role(922067926247415848) # 이건 안넣냐
+                    await ticket_channel.set_permissions(
+                        staff,
+                        read_messages=True,
+                        send_messages=True,
+                        read_message_history=True,
+                    )
+                    await ticket_channel.send(
+                        embed=discord.Embed(description=message.content).set_author(
+                            icon_url=ctx.author.avatar_url,
+                            name=f"{ctx.author} ({ctx.author.id})",
+                        )
+                    )
+                    await message.add_reaction("✅")
+                    await new_ticket.edit(embed=embed1, components=[])
         elif str(message.channel.type) != "private":
             try:
                 if message.channel.category.id == category_id:
@@ -125,6 +197,32 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                     await message.add_reaction("✅")
             except:
                 pass
+    # @commands.command(name="티켓오픈")
+    # @commands.is_owner()
+    # async def on_message(self, ctx, user_id:int):
+    #     user = await self.bot.fetch_user(user_id)
+    #     ticket_guild = self.bot.get_guild(ticket_guild_id)
+    #     open_ticket_category = ticket_guild.get_channel(category_id)
+    #     ticket_channel = await open_ticket_category.create_text_channel(
+    #                         f'일반-{user.dm_channel.id}{user.name}',
+    #                         topic=f"{user_id}",
+    #                         position = 1
+    #                     )
+    #     staff = ticket_guild.get_role(922067926247415848) # 이건 안넣냐
+    #     await ticket_channel.set_permissions(
+    #                     staff,
+    #                     read_messages=True,
+    #                     send_messages=True,
+    #                     read_message_history=True,
+    #                 )
+    #     await (await self.bot.fetch_user(int(ctx.channel.topic))).send(
+    #         embed = discord.Embed(title=f'문의',
+    #         description ="안녕하세요 봇개발자로 부터 티켓이 열렸습니다.",
+    #         colour = discord.Colour.blue(),
+    #         ).set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
+            
+    #     )
+    #     await ctx.send("티켓오픈!")
     @commands.command(name="문의종료", aliases=["종료", "close"])
     @commands.has_permissions(administrator=True)
     async def ticket_end(self, ctx):
@@ -132,10 +230,10 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
         ticket_guild = self.bot.get_guild(ticket_guild_id)
         ticket_channel = self.bot.get_channel(ctx.channel.id)
         await (await self.bot.fetch_user(int(ctx.channel.topic))).send(
-            embed = discord.Embed(title=f'문의',
-            description =f"**문의종료**\n  문의를 종료하겠습니다 문의를 해주셔서 감사합니다.",
+            embed = discord.Embed(title=f'문의종료',
+            description =f"문의를 해주셔서 감사합니다! \n**더욱 더 성장있는 짱구가 되겠습니다** \n**문의한 내용들은 영구적으로 보관되며 삭제가 불가능합니다** \n \n 감사합니다!",
             colour = discord.Colour.blue(),
-            ).set_thumbnail(url="https://cdn.discordapp.com/avatars/872714206246469662/810ef9d933f9985d82f441de0a03fb6b.webp?size=80")
+            ).set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
             
         )
         await ctx.channel.edit(
