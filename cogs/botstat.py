@@ -32,7 +32,7 @@ class botstat(commands.Cog):
             if voted.voted:
                 return await ctx.reply("> 하트를 해주셔서 감사해요!💕")
                 
-            msg = await ctx.reply("> 하트를 하지 않으신 것 같아요.. 아래링크로 이동하셔서 하트를 해주세요!\n> 링크: https://koreanbots.dev/bots/872714206246469662/vote\n> 1분후 재확인 할게요!")
+            msg = await ctx.reply("> 하트를 하지 않으신 것 같아요.. 아래링크로 이동하셔서 하트를 해주세요!\n> 링크: https://koreanbots.dev/bots/933204352645103647/vote\n> 1분후 재확인 할게요!")
             await asyncio.sleep(60)
             voted = await self.krb.is_voted(user_id=ctx.author.id, bot_id=self.bot.user.id)
             if voted.voted:
