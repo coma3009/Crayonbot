@@ -106,6 +106,8 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                 embed2.add_field(name="❔궁금증", value="궁금증은 명령어를 어떻게 사용하는지 등 궁금할때  \n 궁금증으로 넣어주시면 됩니다")
                 embed2.add_field(name="🚫신고", value="버그악용등 신고할때 \n 신고로 넣어주시면 됩니다")
                 msg = await message.author.send(embed=embed2, components = [
+                    Select(placeholder="옵션",
+                                         options=[
                     [
                          SelectOption(label = "일반문의", emoji="🌀", description="일반문의는 어떤 제보나 신고를 하실때", value="il"),
                          SelectOption(label = "오류제보", emoji="⛔", description="오류제보는 오류가 발생하거나 명령어 작동이 안될때", value="war1"),
@@ -113,6 +115,8 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                          SelectOption(label = "신고", emoji="🚫", description="버그악용등 신고할때", value="sin"),
                          SelectOption(label = "문의취소", emoji = "❌", description="문의취소", value = "cancel"),
                     ]
+                ]
+                )
                 ])
                 try:
                     interaction = await self.bot.wait_for("select_option",
