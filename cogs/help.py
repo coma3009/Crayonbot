@@ -243,23 +243,23 @@ class help(commands.Cog):
             inline=False
         )
         music.add_field(
-            name="짱구야 재생 [인지값]",
+            name="짱구야 재생 인자값",
             value="```\n입력한 인자값(제목 또는 링크)을 불러와 재생해요.\n```",
             inline=False
         )
         music.add_field(
-            name="짱구야 일시정지",
-            value="```\n현재 재생중인 곡을 일시정지해요\n```",
-            inline=False
-        )
-        music.add_field(
-            name="짱구야 현재곡",
+            name="짱구야 지금곡",
             value="```\n현재 재생중인 노래의 정보를 불러와요.\n```",
             inline=False
         )
         music.add_field(
-            name="짱구야 스킵",
-            value="```\n현재 재생중인 곡을 스킵해요\n```",
+            name="짱구야 일시정지",
+            value="```\n현재 재생중인 곡을 일시정지해요.\n```",
+            inline=False
+        )
+        music.add_field(
+            name="짱구야 이어재생",
+            value="```\n일시정지된 곡을 이어서 재생해요.\n```",
             inline=False
         )
         music.add_field(
@@ -268,13 +268,53 @@ class help(commands.Cog):
             inline=False
         )
         music.add_field(
-            name="짱구야 재생목록",
-            value="```\n재생목록을 확인해요\n```",
+            name="짱구야 루프",
+            value="```\n반복기능을 활성화하거나 비활성화해요.\n```",
+            inline=False
+        )
+        music.add_field(
+            name="짱구야 큐루프",
+            value="```\n큐반복기능을 활성화하거나 비활성화해요.\n```",
+            inline=False
+        )
+        music.add_field(
+            name="짱구야 노래기록",
+            value="```\n지금까지 재생됐던 노래기록을 불러와요.\n```",
+            inline=False
+        )
+        music.add_field(
+            name="짱구야 정지",
+            value="```\n현재 재생중인 곡을 완전히 정지해요.\n```",
+            inline=False
+        )
+        music.add_field(
+            name="짱구야 스킵",
+            value="```\n현재 재생중인 곡을 스킵하거나 요청해요.\n```",
+            inline=False
+        )
+        music.add_field(
+            name="짱구야 큐",
+            value="```\n현재 대기중인 큐목록을 보여줘요.\n```",
+            inline=False
+        )
+        music.add_field(
+            name="짱구야 반복확인",
+            value="```\n현재 설정된 반복상태를 보여줘요.\n```",
             inline=False
         )
         music.add_field(
             name="짱구야 셔플",
             value="```\n셔플기능을 활성화하거나 비활성화해요.\n```",
+            inline=False
+        )
+        music.add_field(
+            name="짱구야 이전곡",
+            value="```\n이전곡을 재생해요.\n```",
+            inline=False
+        )
+        music.add_field(
+            name="짱구야 나가",
+            value="```\n현재 접속한 음성채널에서 노래를 멈추고 나가요.\n```",
             inline=False
         )
         music.set_footer(text=f"5 / 9페이지",icon_url=ctx.author.avatar_url)

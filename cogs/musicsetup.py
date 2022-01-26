@@ -172,7 +172,6 @@ class Musicsetup(commands.Cog, discordSuperUtils.CogManager.Cog, name="Musicsetu
             content=f'** **\n**__대기열 목록__**:\n{queue_res}',
             embed=embed,
         )
-        await interaction.send(content=f"새로고침완료!",ephemeral=False,delete_after=5)
 
     # Play function
     async def play_cmd(self, ctx, query):
@@ -210,7 +209,7 @@ class Musicsetup(commands.Cog, discordSuperUtils.CogManager.Cog, name="Musicsetu
             title="현재 아무 곡도 재생 중이지 않아요.",
             colour=discord.Colour.dark_purple()
         )
-        em.set_image(url="https://media.discordapp.net/attachments/910867529151430660/914931193311539220/7f419de73eafae57.png?width=400&height=187")
+        em.set_image(url="https://cdn.discordapp.com/attachments/921555509935480853/921555519578189834/c265877614d80026.png?width=400&height=144")
         em.set_footer(text="아래 버튼을 통해 조작하실 수 있어요!")
         em.add_field(name="루프모드",value="-",inline=False)
         em.add_field(name="셔플모드",value="-",inline=False)

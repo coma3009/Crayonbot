@@ -622,14 +622,14 @@ class Search(commands.Cog):
         cur = await db.execute("SELECT * FROM ani_comment WHERE ani_id = ?", (ani_id,))
         resp = await cur.fetchall()
         if datas.ended == True:
-            ended = "<a:check:893674152672776222> 완결"
+            ended = "✅ 완결"
         else:
-            ended = "<a:botoff:896388083816218654> 미완결"
+            ended = "<:botoff:933726671431950378> 미완결"
 
         if datas.awards != []:
             awards = datas.awards
         else:
-            awards = "<a:botoff:896388083816218654> 정보 없음"
+            awards = "<:botoff:933726671431950378> 정보 없음"
 
         if datas.content_rating == "성인 이용가":
             content_rating = "🔞 성인 이용가"
@@ -637,15 +637,15 @@ class Search(commands.Cog):
             content_rating = datas.content_rating
 
         if datas.viewable == True:
-            viewable = "<a:check:893674152672776222> 시청가능"
+            viewable = "✅ 시청가능"
         else:
-            viewable = "<a:botoff:896388083816218654> 시청불가"
+            viewable = "<:botoff:933726671431950378> 시청불가"
 
         genres = datas.genres
         tags = datas.tags
         air_year_quarter = f"`{datas.air_year_quarter}`"
         if datas.air_day is None:
-            air_day = "<a:botoff:896388083816218654> 정보가 없거나 방영종료입니다."
+            air_day = "<:botoff:933726671431950378> 정보가 없거나 방영종료입니다."
         else:
             air_day = f"`{datas.air_day}`"
 
@@ -678,7 +678,7 @@ class Search(commands.Cog):
             comment_ = "\n\n".join(cache)
             em.add_field(name="댓글목록", value=f"```yml\n{comment_}\n```", inline=False)
         if resp == []:
-            em.add_field(name="댓글목록", value="<a:botoff:896388083816218654> 댓글 정보 없음", inline=False)
+            em.add_field(name="댓글목록", value="<:botoff:933726671431950378> 댓글 정보 없음", inline=False)
         em.set_thumbnail(url=datas.image)
         em.set_footer(text=str(datas.id),icon_url="https://theme.zdassets.com/theme_assets/1696093/5109bde31eaa326750865af6c220ea865b16013b.png")
         return {"embed":em,"url":datas.url,"name":datas.name}

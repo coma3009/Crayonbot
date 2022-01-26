@@ -275,7 +275,7 @@ class Owner(commands.Cog):
         )
         em.add_field(name="뮤직 셋업 기능",value="히드라처럼 특정채널에서 노래를 재생해보세요!",inline=False)
         em.add_field(name="욕설 감지 무제한",value="욕설 감지제한이 1,000회였다면 이젠 무제한으로 욕설을 감지해보세요!",inline=False)
-        em.add_field(name="트위치 채널 등록가능 개수 1 -> 5개", value="트위치 방송알림을 받기위해 등록하는 채널 개수 제한이 1개에서 5개로 늘어납니다!\n다양한 스트리머를 등록해 방송알림을 받아보세요!", inline=False)
+        # em.add_field(name="트위치 채널 등록가능 개수 1 -> 5개", value="트위치 방송알림을 받기위해 등록하는 채널 개수 제한이 1개에서 5개로 늘어납니다!\n다양한 스트리머를 등록해 방송알림을 받아보세요!", inline=False)
         em.add_field(name="유튜브 채널 등록가능 개수 1 -> 5개", value="유튜브 방송알림을 받기위해 등록하는 채널 개수 제한이 1개에서 5개로 늘어납니다!\n다양한 스트리머를 등록해 방송알림을 받아보세요!", inline=False)
         if resp == None:
             em.add_field(name="프리미엄 상태",value="<a:cross:893675768880726017>프리미엄을 이용중인 서버가 아니거나 만료된 상태에요..😥\n자세한 사항&구매는 제 DM으로 `짱구봇에게 DM으로 문의넣어주세요`")

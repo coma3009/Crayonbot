@@ -145,7 +145,7 @@ class util(commands.Cog):
         # This is, for now, only temporary
 
         embed = discord.Embed(
-            description="하린봇 정보",
+            description="짱구봇 정보",
             color=0x42F56C
         )
         embed.set_thumbnail(url=self.bot.user.avatar_url)
@@ -153,7 +153,7 @@ class util(commands.Cog):
             url="https://media.discordapp.net/attachments/921555509935480853/921555519578189834/c265877614d80026.png?width=400&height=144")
         embed.add_field(
             name="주인:",
-            value="DEV.RYZEN#0001(866297659362246706)",
+            value="Coma#3009(866297659362246706)",
             inline=True
         )
         embed.add_field(
