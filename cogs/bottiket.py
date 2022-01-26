@@ -8,7 +8,11 @@ import pytz
 import asyncio
 import discord_components
 import datetime
-from discord_components import Button, ButtonStyle, SelectOption, Select, component
+from discordSuperUtils import ModMailManager
+from pycord_components import (
+    Select,
+    SelectOption
+)
 ticket_guild_id = 915551354800451616
 category_id = 915561810411814973
 close_ticket_category_id = 915561835267231774
@@ -92,33 +96,33 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                 )
                 embed1.set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
                 embed1.add_field(name="**:warning:  주의사항**", value="`` 불필요한 문의는 제재 됩니다.`` \n \n ``관리자를 욕할시 처벌대상이 됩니다.`` \n \n ``관리자를 존중해주세요.``")
-                embed = discord.Embed(title=f'문의',description =f"문의를 해주셔서 감사힙니다. \n 답변이 늦을수도 있으니 \n 기다려주세요. \n \n **문의한 모든 내용은 영구저장됩니다**" ,
+                await message.author.send(embed=embed1)
+                embed2 = discord.Embed(title=f'카테고리' ,
                 colour = discord.Colour.blue()
                 )
-                embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
-                embed.add_field(name="**:warning:  주의사항**", value="`` 불필요한 문의는 제재 됩니다.`` \n \n ``관리자를 욕할시 처벌대상이 됩니다.`` \n \n ``관리자를 존중해주세요.``")
-                embed.add_field(name="**카테고리**", value="아래 카테고리를 선택해서 버튼을 클릭해주세요.")
-                embed.add_field(name="🌀일반문의", value="일반문의는 어떤 제보나 신고를 하실때 \n 일반문의로 넣어주시면 됩니다")
-                embed.add_field(name="⛔오류제보", value="오류제보는 오류가 발생하거나 명령어 작동이 안될때 \n 오류제보로 넣어주시면 됩니다")
-                embed.add_field(name="❔궁금증", value="궁금증은 명령어를 어떻게 사용하는지 등 궁금할때  \n 궁금증으로 넣어주시면 됩니다")
-                new_ticket = await message.author.send(embed=embed, components = [
+                embed2.add_field(name="**카테고리**", value="아래 카테고리를 선택해서 버튼을 클릭해주세요.")
+                embed2.add_field(name="🌀일반문의", value="일반문의는 어떤 제보나 신고를 하실때 \n 일반문의로 넣어주시면 됩니다")
+                embed2.add_field(name="⛔오류제보", value="오류제보는 오류가 발생하거나 명령어 작동이 안될때 \n 오류제보로 넣어주시면 됩니다")
+                embed2.add_field(name="❔궁금증", value="궁금증은 명령어를 어떻게 사용하는지 등 궁금할때  \n 궁금증으로 넣어주시면 됩니다")
+                embed2.add_field(name="🚫신고", value="버그악용등 신고할때 \n 신고로 넣어주시면 됩니다")
+                msg = await message.author.send(embed=embed2, components = [
                     [
-                        Button(label = "일반문의", emoji="🌀", style=ButtonStyle.green, id="il"),
-                        Button(label = "오류제보", emoji="⛔", style=ButtonStyle.red, id="war1"),
-                        Button(label = "궁금증", emoji="❔", style=ButtonStyle.blue, id="qu"),
-                        Button(label = "문의취소", emoji = "❌", style = ButtonStyle.red, id = "cancel"),
+                         SelectOption(label = "일반문의", emoji="🌀", description="일반문의는 어떤 제보나 신고를 하실때", value="il"),
+                         SelectOption(label = "오류제보", emoji="⛔", description="오류제보는 오류가 발생하거나 명령어 작동이 안될때", value="war1"),
+                         SelectOption(label = "궁금증", emoji="❔", description="궁금증은 명령어를 어떻게 사용하는지 등 궁금할때", value="qu"),
+                         SelectOption(label = "신고", emoji="🚫", description="버그악용등 신고할때", value="sin"),
+                         SelectOption(label = "문의취소", emoji = "❌", description="문의취소", value = "cancel"),
                     ]
                 ])
-                def check(res):
-                    return res.user == ctx.author and res.channel == ctx.channel
-                    
                 try:
-                    res = await self.bot.wait_for("button_click", check = check, timeout = 25)
-                    if res.component.id == "cancel":
-                        return await new_ticket.edit(embed = discord.Embed(title = "문의 취소", description = "문의 취소완료", colour=discord.Colour.red()), components = [])
+                    interaction = await self.bot.wait_for("select_option",
+                                                        check=lambda i: i.user.id == ctx.author.id and i.message.id == msg.id,
+                                                        timeout=60)
+                    value = interaction.values[0]
                 except asyncio.TimeoutError:
-                    await new_ticket.edit('시간이 지나 문의가 취소됬습니다.', components = [])
-                if res.component.id == "il":
+                    await msg.edit("시간이 초과되었어요!", components=[])
+                    return
+                if value  == "il":
                     ticket_channel = await open_ticket_category.create_text_channel(
                         f'일반-{message.author.dm_channel.id}({message.author.name})',
                         topic=f"{message.author.id}",
@@ -140,7 +144,7 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                     )
                     await message.add_reaction("✅")
                     await new_ticket.edit(embed=embed1, components=[])
-                if res.component.id == "war1":
+                if value  == "war1":
                     ticket_channel = await open_ticket_category.create_text_channel(
                         f'오류-{message.author.dm_channel.id}({message.author.name})',
                         topic=f"{message.author.id}",
@@ -162,7 +166,7 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                     )
                     await message.add_reaction("✅")
                     await new_ticket.edit(embed=embed1, components=[])
-                if res.component.id == "qu":
+                if value  == "qu":
                     ticket_channel = await open_ticket_category.create_text_channel(
                         f'궁금증-{message.author.dm_channel.id}({message.author.name})',
                         topic=f"{message.author.id}",
@@ -184,6 +188,31 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                     )
                     await message.add_reaction("✅")
                     await new_ticket.edit(embed=embed1, components=[])
+                if value  == "sin":
+                    ticket_channel = await open_ticket_category.create_text_channel(
+                        f'신고-{message.author.dm_channel.id}({message.author.name})',
+                        topic=f"{message.author.id}",
+                        position = 1
+                    )# 이건 안넣냐
+                    await ticket_channel.send('<@866297659362246706>')
+                    staff = ticket_guild.get_role(922067926247415848) # 이건 안넣냐
+                    await ticket_channel.set_permissions(
+                        staff,
+                        read_messages=True,
+                        send_messages=True,
+                        read_message_history=True,
+                    )
+                    await ticket_channel.send(
+                        embed=discord.Embed(description=message.content).set_author(
+                            icon_url=ctx.author.avatar_url,
+                            name=f"{ctx.author} ({ctx.author.id})",
+                        )
+                    )
+                    await message.add_reaction("✅")
+                    await new_ticket.edit(embed=embed1, components=[])
+                if value  == "cancle":
+                    embed3=discord.Embed(title="문의취소", descripiton="문의 취소완료",colour=discord.Colour.random())
+                    await message.author.send(embed=embed3)
         elif str(message.channel.type) != "private":
             try:
                 if message.channel.category.id == category_id:
