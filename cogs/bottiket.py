@@ -106,18 +106,28 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                 embed2.add_field(name="❔궁금증", value="궁금증은 명령어를 어떻게 사용하는지 등 궁금할때  \n 궁금증으로 넣어주시면 됩니다")
                 embed2.add_field(name="🚫신고", value="버그악용등 신고할때 \n 신고로 넣어주시면 됩니다")
                 msg = await message.author.send(embed=embed2, components = [
-                    Select(placeholder="옵션",
-                                         options=[
-                    [
+                    Select(placeholder="문의",
+                            options=[
                          SelectOption(label = "일반문의", emoji="🌀", description="일반문의는 어떤 제보나 신고를 하실때", value="il"),
                          SelectOption(label = "오류제보", emoji="⛔", description="오류제보는 오류가 발생하거나 명령어 작동이 안될때", value="war1"),
                          SelectOption(label = "궁금증", emoji="❔", description="궁금증은 명령어를 어떻게 사용하는지 등 궁금할때", value="qu"),
                          SelectOption(label = "신고", emoji="🚫", description="버그악용등 신고할때", value="sin"),
                          SelectOption(label = "문의취소", emoji = "❌", description="문의취소", value = "cancel"),
-                    ]
-                ]
+                ]),
+                ],
                 )
-                ])
+                embed3 = discord.Embed(title=f'문의',description =f"카테고리가 **일반문의**로 선택 됐습니다" ,
+                colour = discord.Colour.blue()
+                )
+                embed4 = discord.Embed(title=f'문의',description =f"카테고리가 **오류제보**로 선택 됐습니다" ,
+                colour = discord.Colour.blue()
+                )
+                embed5 = discord.Embed(title=f'문의',description =f"카테고리가 **궁금증**로 선택 됐습니다" ,
+                colour = discord.Colour.blue()
+                )
+                embed6 = discord.Embed(title=f'문의',description =f"카테고리가 **신고**로 선택 됐습니다" ,
+                colour = discord.Colour.blue()
+                )
                 try:
                     interaction = await self.bot.wait_for("select_option",
                                                         check=lambda i: i.user.id == ctx.author.id and i.message.id == msg.id,
@@ -147,7 +157,7 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                         )
                     )
                     await message.add_reaction("✅")
-                    await new_ticket.edit(embed=embed1, components=[])
+                    await msg.edit(embed=embed3, components=[])
                 if value  == "war1":
                     ticket_channel = await open_ticket_category.create_text_channel(
                         f'오류-{message.author.dm_channel.id}({message.author.name})',
@@ -169,7 +179,7 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                         )
                     )
                     await message.add_reaction("✅")
-                    await new_ticket.edit(embed=embed1, components=[])
+                    await msg.edit(embed=embed4, components=[])
                 if value  == "qu":
                     ticket_channel = await open_ticket_category.create_text_channel(
                         f'궁금증-{message.author.dm_channel.id}({message.author.name})',
@@ -191,7 +201,7 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                         )
                     )
                     await message.add_reaction("✅")
-                    await new_ticket.edit(embed=embed1, components=[])
+                    await msg.edit(embed=embed5, components=[])
                 if value  == "sin":
                     ticket_channel = await open_ticket_category.create_text_channel(
                         f'신고-{message.author.dm_channel.id}({message.author.name})',
@@ -213,10 +223,10 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                         )
                     )
                     await message.add_reaction("✅")
-                    await new_ticket.edit(embed=embed1, components=[])
+                    await msg.edit(embed=embed6, components=[])
                 if value  == "cancle":
-                    embed3=discord.Embed(title="문의취소", descripiton="문의 취소완료",colour=discord.Colour.random())
-                    await message.author.send(embed=embed3)
+                    embed7=discord.Embed(title="문의취소", descripiton="문의 취소완료",colour=discord.Colour.random())
+                    await msg.edit(embed=embed7)
         elif str(message.channel.type) != "private":
             try:
                 if message.channel.category.id == category_id:
