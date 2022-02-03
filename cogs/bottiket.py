@@ -1,3 +1,5 @@
+
+import traceback
 import discord
 from discord import embeds
 from discord.ext import commands
@@ -11,7 +13,10 @@ import datetime
 from discordSuperUtils import ModMailManager
 from pycord_components import (
     Select,
-    SelectOption
+    SelectOption,
+    Button,
+    ButtonStyle,
+    Interaction
 )
 ticket_guild_id = 915551354800451616
 category_id = 915561810411814973
@@ -30,7 +35,7 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
             return
         # if message.content.startswith(["!", "#", "/", self.bot.command_prefix[0]]):
         #     return
-        if message.content.startswith("!") or message.content.startswith("#") or message.content.startswith("/") or message.content.startswith(self.bot.command_prefix[0]):
+        if message.content.startswith("!") or message.content.startswith("#") or message.content.startswith("ㅉ") or message.content.startswith("/") or message.content.startswith(self.bot.command_prefix[0]):
             return
 
         if str(message.channel.type) in "private":
@@ -112,8 +117,8 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                          SelectOption(label = "오류제보", emoji="⛔", description="오류제보는 오류가 발생하거나 명령어 작동이 안될때", value="war1"),
                          SelectOption(label = "궁금증", emoji="❔", description="궁금증은 명령어를 어떻게 사용하는지 등 궁금할때", value="qu"),
                          SelectOption(label = "신고", emoji="🚫", description="버그악용등 신고할때", value="sin"),
-                         SelectOption(label = "문의취소", emoji = "❌", description="문의취소", value = "cancel"),
-                ]),
+                         SelectOption(label = "문의취소", emoji = "❌", description="문의취소", value="cancel"),
+                ]), 
                 ],
                 )
                 embed3 = discord.Embed(title=f'문의',description =f"카테고리가 **일반문의**로 선택 됐습니다" ,
@@ -128,6 +133,14 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                 embed6 = discord.Embed(title=f'문의',description =f"카테고리가 **신고**로 선택 됐습니다" ,
                 colour = discord.Colour.blue()
                 )
+                now = datetime.datetime.now()
+                year = now.year
+                month = now.month
+                date = now.day
+                hour = now.hour
+                minute = now.minute
+                second = now.second
+                open_time = f"{year}년 {month}월 {date}일 {hour}시 {minute}분 {second}초"
                 try:
                     interaction = await self.bot.wait_for("select_option",
                                                         check=lambda i: i.user.id == ctx.author.id and i.message.id == msg.id,
@@ -150,6 +163,27 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                         send_messages=True,
                         read_message_history=True,
                     )
+                    embed=discord.Embed(title="오토메시지",description=f"```fix\n티켓 개설일시: {open_time}```\n```티켓 개설 요청자: {message.author.name}({message.author.id})```",
+                    color=0xf7fcfd)
+                    embed.add_field(name="⛔ 연휴",
+                                value="```연휴 일때 문의 왔을때```",
+                                inline=False)
+                    embed.add_field(name="🖨 느린 답변",
+                                    value="```관리자들 비쁠때```",
+                                    inline=False)
+                    embed.add_field(name="❌ 티켓 종료",
+                                    value="```현재 티켓을 종료해요.```",
+                                    inline=False)
+
+                    await ticket_channel.send(content=f"",
+                                         embed=embed,
+                                         components=[
+                                            [
+                                                Button(label="⛔ 연휴  ",custom_id="ticket_on",style=4),
+                                                Button(label="🖨 느린 답변",custom_id="ticket_n",style=3),
+                                                Button(label="❌ 티켓 종료",custom_id="ticket_clos",style=4)
+                                            ]
+                                         ])
                     await ticket_channel.send(
                         embed=discord.Embed(description=message.content).set_author(
                             icon_url=ctx.author.avatar_url,
@@ -172,6 +206,27 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                         send_messages=True,
                         read_message_history=True,
                     )
+                    embed=discord.Embed(title="오토메시지",description=f"```fix\n티켓 개설일시: {open_time}```\n```티켓 개설 요청자: {message.author.name}({message.author.id})```",
+                    color=0xf7fcfd)
+                    embed.add_field(name="⛔ 연휴",
+                                value="```연휴 일때 문의 왔을때```",
+                                inline=False)
+                    embed.add_field(name="🖨 느린 답변",
+                                    value="```관리자들 비쁠때```",
+                                    inline=False)
+                    embed.add_field(name="❌ 티켓 종료",
+                                    value="```현재 티켓을 종료해요.```",
+                                    inline=False)
+
+                    await ticket_channel.send(content=f"",
+                                         embed=embed,
+                                         components=[
+                                            [
+                                                Button(label="⛔ 연휴  ",custom_id="ticket_on",style=4),
+                                                Button(label="🖨 느린 답변",custom_id="ticket_n",style=3),
+                                                Button(label="❌ 티켓 종료",custom_id="ticket_clos",style=4)
+                                            ]
+                                         ])
                     await ticket_channel.send(
                         embed=discord.Embed(description=message.content).set_author(
                             icon_url=ctx.author.avatar_url,
@@ -194,6 +249,27 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                         send_messages=True,
                         read_message_history=True,
                     )
+                    embed=discord.Embed(title="오토메시지",description=f"```fix\n티켓 개설일시: {open_time}```\n```티켓 개설 요청자: {message.author.name}({message.author.id})```",
+                    color=0xf7fcfd)
+                    embed.add_field(name="⛔ 연휴",
+                                value="```연휴 일때 문의 왔을때```",
+                                inline=False)
+                    embed.add_field(name="🖨 느린 답변",
+                                    value="```관리자들 비쁠때```",
+                                    inline=False)
+                    embed.add_field(name="❌ 티켓 종료",
+                                    value="```현재 티켓을 종료해요.```",
+                                    inline=False)
+
+                    await ticket_channel.send(content=f"",
+                                         embed=embed,
+                                         components=[
+                                            [
+                                                Button(label="⛔ 연휴  ",custom_id="ticket_on",style=4),
+                                                Button(label="🖨 느린 답변",custom_id="ticket_n",style=3),
+                                                Button(label="❌ 티켓 종료",custom_id="ticket_clos",style=4)
+                                            ]
+                                         ])
                     await ticket_channel.send(
                         embed=discord.Embed(description=message.content).set_author(
                             icon_url=ctx.author.avatar_url,
@@ -216,6 +292,27 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                         send_messages=True,
                         read_message_history=True,
                     )
+                    embed=discord.Embed(title="오토메시지",description=f"```fix\n티켓 개설일시: {open_time}```\n```티켓 개설 요청자: {message.author.name}({message.author.id})```",
+                    color=0xf7fcfd)
+                    embed.add_field(name="⛔ 연휴",
+                                value="```연휴 일때 문의 왔을때```",
+                                inline=False)
+                    embed.add_field(name="🖨 느린 답변",
+                                    value="```관리자들 비쁠때```",
+                                    inline=False)
+                    embed.add_field(name="❌ 티켓 종료",
+                                    value="```현재 티켓을 종료해요.```",
+                                    inline=False)
+
+                    await ticket_channel.send(content=f"",
+                                         embed=embed,
+                                         components=[
+                                            [
+                                                Button(label="⛔ 연휴  ",custom_id="ticket_on",style=4),
+                                                Button(label="🖨 느린 답변",custom_id="ticket_n",style=3),
+                                                Button(label="❌ 티켓 종료",custom_id="ticket_clos",style=4)
+                                            ]
+                                         ])
                     await ticket_channel.send(
                         embed=discord.Embed(description=message.content).set_author(
                             icon_url=ctx.author.avatar_url,
@@ -224,16 +321,20 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
                     )
                     await message.add_reaction("✅")
                     await msg.edit(embed=embed6, components=[])
-                if value  == "cancle":
-                    embed7=discord.Embed(title="문의취소", descripiton="문의 취소완료",colour=discord.Colour.random())
-                    await msg.edit(embed=embed7)
+                if value == "cancel":
+                    try:
+                        embed7=discord.Embed(title="문의취소", description="문의 취소완료",colour=discord.Colour.random())
+                        await msg.edit(embed=embed7, components=[])
+                    
+                    except:
+                        print(traceback.format_exc())
         elif str(message.channel.type) != "private":
             try:
                 if message.channel.category.id == category_id:
                     await (await self.bot.fetch_user(int(message.channel.topic))).send(
                         embed=discord.Embed(
                             title="** 문의 답변 **",
-                            description=f"**`관리자` {message.author.name}** : `{message.content}",
+                            description=f"**`관리자` {message.author.name}** : {message.content}",
                             colour = discord.Colour.blue(),
                             )
                         )
@@ -247,7 +348,7 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
     #     ticket_guild = self.bot.get_guild(ticket_guild_id)
     #     open_ticket_category = ticket_guild.get_channel(category_id)
     #     ticket_channel = await open_ticket_category.create_text_channel(
-    #                         f'일반-{user.dm_channel.id}{user.name}',
+    #                         f'일반-{user.id}{user.name}',
     #                         topic=f"{user_id}",
     #                         position = 1
     #                     )
@@ -258,7 +359,8 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
     #                     send_messages=True,
     #                     read_message_history=True,
     #                 )
-    #     await (await self.bot.fetch_user(int(ctx.channel.topic))).send(
+    #     await asyncio.sleep(2)
+    #     await user.send(
     #         embed = discord.Embed(title=f'문의',
     #         description ="안녕하세요 봇개발자로 부터 티켓이 열렸습니다.",
     #         colour = discord.Colour.blue(),
@@ -266,6 +368,54 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
             
     #     )
     #     await ctx.send("티켓오픈!")
+    @commands.Cog.listener(name="on_button_click")
+    async def ticket_auto_control(self,interaction:Interaction):
+        custom_id = interaction.custom_id
+        ctx = await self.bot.get_context(interaction.message)
+        if custom_id == "ticket_on":
+            if ctx.channel.category.id == category_id:
+                    await (await self.bot.fetch_user(int(ctx.channel.topic))).send(
+                        embed=discord.Embed(
+                            title="** 문의 답변 **",
+                            description=f"**시스템**\n현재 __공휴일__입니다. \n답변이 늦거나 공휴일이 끝난 후에 답변을 드리겠습니다. \n양해 부탁드립니다",
+                            colour = discord.Colour.blue(),
+                            )
+                        )
+                    await interaction.send("#전송완료",ephemeral=False)
+        if custom_id == "ticket_n":
+            if ctx.channel.category.id == category_id:
+                    await (await self.bot.fetch_user(int(ctx.channel.topic))).send(
+                        embed=discord.Embed(
+                            title="** 문의 답변 **",
+                            description=f"**시스템**\n현재 관리자가 __바쁜__ 관계로 답변이 늦을 수도 있습니다. \n양해 부탁드립니다",
+                            colour = discord.Colour.blue(),
+                            )
+                        )
+                    await interaction.send("#전송완료",ephemeral=False)
+        if custom_id == "ticket_clos":
+            ticket_guild = self.bot.get_guild(ticket_guild_id)
+            ticket_channel = self.bot.get_channel(ctx.channel.id)
+            await (await self.bot.fetch_user(int(ctx.channel.topic))).send(
+                embed = discord.Embed(title=f'문의종료',
+                description =f"문의를 해주셔서 감사합니다! \n**더욱 더 성장있는 짱구가 되겠습니다** \n**문의한 내용들은 영구적으로 보관되며 삭제가 불가능합니다** \n \n 감사합니다!",
+                colour = discord.Colour.blue(),
+                ).set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
+                
+            )
+            await ctx.channel.edit(
+                topic="close-{}".format(ctx.channel.name),
+                category=ticket_guild.get_channel(close_ticket_category_id),
+                position = len(ctx.channel.category.channels)
+            )
+            await ctx.channel.edit(
+                name = ctx.channel.topic
+            )
+            embed = discord.Embed(
+                colour=0xFF00, title="문의종료", description=f"잠금 요청 유저 : {ctx.author}"
+            )
+            embed.set_footer(text=ctx.author.name, icon_url=ctx.author.avatar_url)
+            await interaction.send(embed=embed,ephemeral=False)
+            await ctx.send(embed=embed,ephemeral=False)
     @commands.command(name="문의종료", aliases=["종료", "close"])
     @commands.has_permissions(administrator=True)
     async def ticket_end(self, ctx):
@@ -292,6 +442,84 @@ class question(commands.Cog): # 야이 미친놈아 command.Cog가 뭐냐
         )
         embed.set_footer(text=ctx.author.name, icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
+    # @commands.command(name="", aliases=["종료", "close"])
+    # @commands.has_permissions(administrator=True)
+    # async def ticket_option(self, ctx):
+    #     await ctx.message.delete()
+    #     ticket_guild = self.bot.get_guild(ticket_guild_id)
+    #     ticket_channel = self.bot.get_channel(ctx.channel.id)
+    #     await (await self.bot.fetch_user(int(ctx.channel.topic))).send(
+    #         embed = discord.Embed(title=f'문의종료',
+    #         description =f"문의를 해주셔서 감사합니다! \n**더욱 더 성장있는 짱구가 되겠습니다** \n**문의한 내용들은 영구적으로 보관되며 삭제가 불가능합니다** \n \n 감사합니다!",
+    #         colour = discord.Colour.blue(),
+    #         ).set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
+            
+    #     )
+    #     await ctx.channel.edit(
+    #         topic="close-{}".format(ctx.channel.name),
+    #         category=ticket_guild.get_channel(close_ticket_category_id),
+    #         position = len(ctx.channel.category.channels)
+    #     )
+    #     await ctx.channel.edit(
+    #         name = ctx.channel.topic
+    #     )
+    #     embed = discord.Embed(
+    #         colour=0xFF00, title="문의종료", description=f"잠금 요청 유저 : {ctx.author}"
+    #     )
+    #     embed.set_footer(text=ctx.author.name, icon_url=ctx.author.avatar_url)
+    #     await ctx.send(embed=embed)
+    # @commands.command(name="문의종료", aliases=["종료", "close"])
+    # @commands.has_permissions(administrator=True)
+    # async def ticket_end(self, ctx):
+    #     await ctx.message.delete()
+    #     ticket_guild = self.bot.get_guild(ticket_guild_id)
+    #     ticket_channel = self.bot.get_channel(ctx.channel.id)
+    #     await (await self.bot.fetch_user(int(ctx.channel.topic))).send(
+    #         embed = discord.Embed(title=f'문의종료',
+    #         description =f"문의를 해주셔서 감사합니다! \n**더욱 더 성장있는 짱구가 되겠습니다** \n**문의한 내용들은 영구적으로 보관되며 삭제가 불가능합니다** \n \n 감사합니다!",
+    #         colour = discord.Colour.blue(),
+    #         ).set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
+            
+    #     )
+    #     await ctx.channel.edit(
+    #         topic="close-{}".format(ctx.channel.name),
+    #         category=ticket_guild.get_channel(close_ticket_category_id),
+    #         position = len(ctx.channel.category.channels)
+    #     )
+    #     await ctx.channel.edit(
+    #         name = ctx.channel.topic
+    #     )
+    #     embed = discord.Embed(
+    #         colour=0xFF00, title="문의종료", description=f"잠금 요청 유저 : {ctx.author}"
+    #     )
+    #     embed.set_footer(text=ctx.author.name, icon_url=ctx.author.avatar_url)
+    #     await ctx.send(embed=embed)
+    # @commands.command(name="문의종료", aliases=["종료", "close"])
+    # @commands.has_permissions(administrator=True)
+    # async def ticket_end(self, ctx):
+    #     await ctx.message.delete()
+    #     ticket_guild = self.bot.get_guild(ticket_guild_id)
+    #     ticket_channel = self.bot.get_channel(ctx.channel.id)
+    #     await (await self.bot.fetch_user(int(ctx.channel.topic))).send(
+    #         embed = discord.Embed(title=f'문의종료',
+    #         description =f"문의를 해주셔서 감사합니다! \n**더욱 더 성장있는 짱구가 되겠습니다** \n**문의한 내용들은 영구적으로 보관되며 삭제가 불가능합니다** \n \n 감사합니다!",
+    #         colour = discord.Colour.blue(),
+    #         ).set_thumbnail(url="https://cdn.discordapp.com/avatars/915546504054333450/b26cea253b3433d2b84b7ec6b55b0a0e.webp?size=1024")
+            
+    #     )
+    #     await ctx.channel.edit(
+    #         topic="close-{}".format(ctx.channel.name),
+    #         category=ticket_guild.get_channel(close_ticket_category_id),
+    #         position = len(ctx.channel.category.channels)
+    #     )
+    #     await ctx.channel.edit(
+    #         name = ctx.channel.topic
+    #     )
+    #     embed = discord.Embed(
+    #         colour=0xFF00, title="문의종료", description=f"잠금 요청 유저 : {ctx.author}"
+    #     )
+    #     embed.set_footer(text=ctx.author.name, icon_url=ctx.author.avatar_url)
+    #     await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(question(bot))
