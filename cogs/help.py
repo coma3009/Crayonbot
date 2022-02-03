@@ -82,8 +82,9 @@ class help(commands.Cog):
 
 ``문의는 봇DM으로 해주시면 감사합니다!``
 
-[서포트서버](https://discord.gg/294KSUxcz2)
-[짱구봇 초대](https://discord.com/api/oauth2/authorize?client_id=915546504054333450&permissions=8&scope=bot)
+[서포트서버](https://discord.gg/d7zEFsbMVN)
+[짱구봇 초대](https://discord.com/oauth2/authorize?client_id=933204352645103647&permissions=8&scope=bot)
+[짱구봇 하트](https://koreanbots.dev/bots/933204352645103647/voteㄴ)
 옵션&생일&입장메시지&레벨링&학교검색&방송&프리미엄&검색&애니&초대정보등의 코드는 팀에서 개발된 하린봇의 코드를 사용했음을 알려드립니다.
 뮤직기능은 Wavelink기본 코드를 사용했음을 알려드립니다
 [Wavelink](https://github.com/PythonistaGuild/Wavelink)
@@ -317,6 +318,11 @@ class help(commands.Cog):
             value="```\n현재 접속한 음성채널에서 노래를 멈추고 나가요.\n```",
             inline=False
         )
+        music.add_field(
+            name="짱구야 뮤직셋업",
+            value="```\n프리미엄플랜을 사용하셔야 \n뮤직셋업 기능을 사용 하실수 있습니다. \n짱구야 프리미엄\n```",
+            inline=False
+        )
         music.set_footer(text=f"5 / 9페이지",icon_url=ctx.author.avatar_url)
         eco=discord.Embed(
             title="도박 💴",
@@ -428,23 +434,8 @@ class help(commands.Cog):
 
         broadcast = discord.Embed(
             title="방송 🎥",
-            description="트위치/유튜브 알림과 검색에 관련한 명령어를 확인해보세요.\n트위치/유튜브 알림 채널은 무료플랜은 1개, 프리미엄플랜은 5개까지 등록가능합니다.",
+            description="유튜브 알림과 검색에 관련한 명령어를 확인해보세요.\n트위치/유튜브 알림 채널은 무료플랜은 1개, 프리미엄플랜은 5개까지 등록가능합니다.",
             colour=discord.Colour.random()
-        )
-        broadcast.add_field(
-            name="짱구야 트위치",
-            value="```\n트위치 스트리밍 알림 서비스에 등록된 채널 목록을 보여드려요.\n```",
-            inline=False
-        )
-        broadcast.add_field(
-            name="짱구야 트위치 등록 @알림역할 #알림채널 [유저ID]",
-            value="```\n트위치 스트리밍 알림 서비스에 등록해요.\n```",
-            inline=False
-        )
-        broadcast.add_field(
-            name="짱구야 트위치 해제",
-            value="```\n트위치 스트리밍 알림 서비스에서 해제해요.\n```",
-            inline=False
         )
         broadcast.add_field(
             name="짱구야 유튜브 [채널이름]",
