@@ -9,7 +9,7 @@
   <a href="https://discord.gg/d7zEFsbMVN">Official Support Server</a> 🔗
   <a href="https://koreanbots.dev/bots/915546504054333450/vote">Vote</a>
   <br><br>
-  <img src="https://cdn.discordapp.com/attachments/921555509935480853/921555519578189834/c265877614d80026.png?width=400&height=144">
+  <img src="https://cdn.discordapp.com/attachments/1021691367317049384/1021696817211117608/unknown.png?size=400">
 </p>
 
 # 📜 봇이름
@@ -32,4 +32,4 @@
 -  💴 도박
 ## 📌상세
 
-<img src="https://media.discordapp.net/attachments/921555509935480853/933213678784901150/f8e8f8a4d6861efe.png?width=1000&height=2000">
+<img src="https://cdn.discordapp.com/attachments/1021691367317049384/1021695976043454504/0.png?size=4096">
